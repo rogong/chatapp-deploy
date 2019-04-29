@@ -3,7 +3,9 @@ const HttpStatus = require('http-status-codes');
 
 const User = require('../models/userModels');
 const Helpers = require('../Helpers/helpers');
+const dbConfig = require('../config/secret');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 module.exports = {
     async  createUser(req, res) {
@@ -51,9 +53,12 @@ module.exports = {
             };
             User.create(body)
                 .then((user) => {
-
+                    const token = jwt.sign({ user }, dbConfig.secret, {
+                        expiresIn: 120
+                    });
+                    res.cookie('auth', token);
                     res.status(HttpStatus.CREATED)
-                        .json({ mesage: 'User created successfully', user });
+                        .json({ mesage: 'User created successfully', user, token });
 
                 })
                 .catch(err => {
