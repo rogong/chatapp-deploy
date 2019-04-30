@@ -54,19 +54,59 @@ module.exports = {
             User.create(body)
                 .then((user) => {
                     const token = jwt.sign({ user }, dbConfig.secret, {
-                        expiresIn: 120
+                        expiresIn: "1h"
                     });
                     res.cookie('auth', token);
                     res.status(HttpStatus.CREATED)
-                        .json({ mesage: 'User created successfully', user, token });
+                        .json({ message: 'User created successfully', user, token });
 
                 })
                 .catch(err => {
                     res
                         .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .json({ mesage: 'Error occured' });
+                        .json({ message: 'Error occured' });
 
                 });
         });
+    },
+
+    async loginUser(req, res) {
+        if (!req.body.username || !req.body.password) {
+            return res.status(HttpStatus.NOT_FOUND)
+                .json({ mesage: 'No empty fields allowed' });
+        }
+
+        await User.findOne({ username: Helpers.firstUpper(req.body.username) })
+            .then(user => {
+                if (!user) {
+                    return res.status(HttpStatus.NOT_FOUND)
+                        .json({ message: 'Username not found' });
+                }
+                return bcrypt.compare(req.body.password, user.password)
+                    .then((result) => {
+
+                        if (!result) {
+                            return res
+                                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .json({ message: 'Password is incorrect' });
+                        }
+
+                        const token = jwt.sign({ data: user }, dbConfig.secret, {
+                            expiresIn: 10000
+
+                        });
+                        res.cookie('auth', token);
+                        return res.status(HttpStatus.OK)
+                            .json({ message: 'Login successful', user, token })
+
+                    });
+            })
+            .catch(err => {
+                return res
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .json({ message: 'Error occured' });
+
+            });
     }
-}
+};
+
