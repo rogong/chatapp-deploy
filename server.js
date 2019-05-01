@@ -9,6 +9,11 @@ const cors = require('cors');
 const app = express();
 
 const dbConfig = require('./config/secret');
+
+// Integrate IO Server
+const server = require('http').createServer(app);
+const io = require('socket.io').listen(server);
+
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Credentials", "true");
@@ -30,13 +35,15 @@ app.use(logger('dev'));
 mongoose.Promise = global.Promise;
 mongoose.connect(dbConfig.url, { useNewUrlParser: true });
 
+
+require('./socket/streams')(io);
+
 const authRoutes = require('./routes/authRoutes');
 const postRoutes = require('./routes/postRoutes');
 
-app.use('/api/chatapp', postRoutes);
 app.use('/api/chatapp', authRoutes);
+app.use('/api/chatapp', postRoutes);
 
-
-app.listen(3000, () => {
+server.listen(3000, () => {
     console.log('Running on port 3000');
 })
