@@ -61,5 +61,59 @@ module.exports = {
                 .json({ message: 'Error occured' })
         }
 
+    },
+
+    async addLike(req, res) {
+        const postId = req.body._id;
+        await Post.update({
+            _id: postId,
+            'likes.username': { $ne: req.user.username }
+        },
+            {
+                $push: {
+                    likes: { username: req.user.username }
+                },
+                $inc: { totalLikes: 1 }
+            }
+        )
+            .then(() => {
+                res.status(HttpStatus.OK)
+                    .json({ message: 'You like the post' });
+
+            })
+            .catch(err =>
+                res.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .json({ message: 'Error occured' })
+            );
+    },
+
+    async addComment(req, res) {
+        const postId = req.body.postId;
+
+        await Post.update({
+            _id: postId
+        },
+            {
+                $push: {
+                    comments: {
+                        userId: req.user._id,
+                        username: req.user.username,
+                        comment: req.body.comment,
+                        createdAt: new Date()
+                    }
+                },
+
+            }
+        )
+            .then(() => {
+                res.status(HttpStatus.OK)
+                    .json({ message: 'Comment added to the post' });
+
+            })
+            .catch(err =>
+                res.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .json({ message: 'Error occured' })
+            );
+
     }
 };
