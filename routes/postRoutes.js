@@ -6,6 +6,7 @@ const PostController = require('../controllers/posts');
 const AuthHelper = require('../Helpers/AuthHelpers');
 
 router.get('/posts', AuthHelper.VerifyToken, PostController.getAllPosts);
+router.get('/post/:id', AuthHelper.VerifyToken, PostController.getPost);
 
 router.post('/post/add-post', AuthHelper.VerifyToken, PostController.addUser);
 router.post('/post/add-like', AuthHelper.VerifyToken, PostController.addLike);

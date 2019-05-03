@@ -115,5 +115,23 @@ module.exports = {
                     .json({ message: 'Error occured' })
             );
 
+    },
+
+    async getPost(req, res) {
+        try {
+            const post = await Post.findOne({ _id: req.params.id })
+                .populate('user')
+                .populate('comments.userId')
+
+            return res.status(HttpStatus.OK)
+                .json({ message: 'Post found', post });
+
+        } catch (error) {
+
+            return res.status(HttpStatus.NOT_FOUND)
+                .json({ message: 'Post not found', post })
+
+        }
     }
 };
+
