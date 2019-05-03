@@ -6,7 +6,7 @@ const Post = require('../models/postModels');
 const User = require('../models/userModels');
 
 module.exports = {
-    addUser(req, res) {
+    addPost(req, res) {
         const schema = Joi.object().keys({
             post: Joi.string().required(),
         });
@@ -24,23 +24,24 @@ module.exports = {
             created: new Date()
         }
 
-        Post.create(body).then(async (post) => {
-            await User.update({
-                _id: req.user._id
-            },
-                {
-                    $push: {
-                        posts: {
-                            postId: post._id,
-                            post: post.post,
-                            created: new Date()
+        Post.create(body)
+            .then(async post => {
+                await User.update({
+                    _id: req.user._id
+                },
+                    {
+                        $push: {
+                            posts: {
+                                postId: post._id,
+                                post: post.post,
+                                created: new Date()
+                            }
                         }
-                    }
 
-                })
-            res.status(HttpStatus.OK)
-                .json({ message: 'Post created', post });
-        })
+                    });
+                res.status(HttpStatus.OK)
+                    .json({ message: 'Post created', post });
+            })
             .catch(err => {
                 res.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .json({ message: 'Error occured' })

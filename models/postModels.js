@@ -13,6 +13,7 @@ const postSchema = mongoose.Schema({
         }
     ],
 
+
     totalLikes: { type: Number, default: 0 },
     likes: [
         {
