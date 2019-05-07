@@ -10,7 +10,7 @@ module.exports = {
         await User.find({})
             .populate('posts', 'postId')
             .populate('following.userFollowed')
-            .populate('folowers.follower')
+            .populate('followers.follower')
             .then(result => {
                 res.status(HttpStatus.OK)
                     .json({ message: 'All users', result });
@@ -27,7 +27,7 @@ module.exports = {
         await User.findOne({ _id: req.params.id })
 
             .populate('following.userFollowed')
-            .populate('folowers.follower')
+            .populate('followers.follower')
             .populate('posts.postId')
 
             .then(result => {
@@ -49,7 +49,7 @@ module.exports = {
         User.findOne({ username: req.params.username })
             .populate('posts.postId')
             .populate('following.userFollowed')
-            .populate('folowers.follower')
+            .populate('followers.follower')
             .then(result => {
                 res.status(HttpStatus.OK)
                     .json({ message: 'User By UserName', result });

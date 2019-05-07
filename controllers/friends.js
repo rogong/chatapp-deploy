@@ -22,12 +22,18 @@ module.exports = {
 
             await User.update({
                 _id: req.body.userFollowed,
-                "followers.follower": { $ne: req.user._id }
+                "following.follower": { $ne: req.user._id }
             },
                 {
                     $push: {
                         followers: {
                             follower: req.user._id
+                        },
+                        notifications: {
+                            senderId: req.user._id,
+                            message: `${req.user.username} is now following you.`,
+                            created: new Date(),
+                            viewProfile: false
                         }
                     }
                 });
@@ -73,6 +79,66 @@ module.exports = {
             .then(() => {
                 res.status(HttpStatus.OK)
                     .json({ message: 'Unfollowing user now' });
+            })
+            .catch(err => {
+                res.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .json({ message: 'Error occured' })
+            });
+    },
+
+    async markNotification(req, res) {
+        if (!req.body.deleteValue) {
+            await User.updateOne({
+                _id: req.user._id,
+                'notifications._id': req.params.id
+            },
+                {
+                    $set: { 'notifications.$.read': true }
+                })
+                .then(() => {
+                    res.status(HttpStatus.OK)
+                        .json({ message: 'Marked as read' });
+                })
+                .catch(err => {
+                    res.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .json({ message: 'Error occured' })
+                });
+        } else {
+            await User.update({
+                _id: req.user._id,
+                'notifications._id': req.params.id
+            },
+                {
+                    $pull: {
+                        notifications: { _id: req.params.id }
+                    }
+                })
+                .then(() => {
+                    res.status(HttpStatus.OK)
+                        .json({ message: 'Deleted successfully' });
+                })
+                .catch(err => {
+                    res.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .json({ message: 'Error occured' })
+                });
+        }
+    },
+
+    async  markAllNotifications(req, res) {
+        await User.update({
+            _id: req.user._id
+        },
+            {
+                $set: { 'notifications.$[elem].read': true }
+
+            },
+            {
+                arrayFilters: [{ 'elem.read': false }],
+                multi: true
+            })
+            .then(() => {
+                res.status(HttpStatus.OK)
+                    .json({ message: 'All marked successfully' });
             })
             .catch(err => {
                 res.status(HttpStatus.INTERNAL_SERVER_ERROR)
