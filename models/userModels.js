@@ -31,6 +31,12 @@ const userSchema = mongoose.Schema({
             date: { type: String, default: '' }
 
         }
+    ],
+    chatList: [
+        {
+            receiverId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+            msgId: { type: mongoose.Schema.Types.ObjectId, ref: 'Message' }
+        }
     ]
 });
 
