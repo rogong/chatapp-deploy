@@ -18,7 +18,7 @@ module.exports = {
         }
 
         const body = {
-            user: req.user_id,
+            user: req.user._id,
             username: req.user.username,
             post: req.body.post,
             created: new Date()
@@ -31,6 +31,7 @@ module.exports = {
                 },
                     {
                         $push: {
+
                             posts: {
                                 postId: post._id,
                                 post: post.post,

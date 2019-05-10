@@ -37,6 +37,14 @@ const userSchema = mongoose.Schema({
             receiverId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
             msgId: { type: mongoose.Schema.Types.ObjectId, ref: 'Message' }
         }
+    ],
+    picVersion: { type: String, default: '1557398690' },
+    picId: { type: String, default: 'default-image.png' },
+    images: [
+        {
+            imgId: { type: String, default: '' },
+            imgVersion: { type: String, default: '' }
+        }
     ]
 });
 

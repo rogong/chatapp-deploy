@@ -11,6 +11,7 @@ module.exports = {
             .populate('posts', 'postId')
             .populate('following.userFollowed')
             .populate('followers.follower')
+            .populate('notifications.senderId')
             .then(result => {
                 res.status(HttpStatus.OK)
                     .json({ message: 'All users', result });
@@ -29,6 +30,7 @@ module.exports = {
             .populate('following.userFollowed')
             .populate('followers.follower')
             .populate('posts.postId')
+            .populate('notifications.senderId')
 
             .then(result => {
 
@@ -50,6 +52,7 @@ module.exports = {
             .populate('posts.postId')
             .populate('following.userFollowed')
             .populate('followers.follower')
+            .populate('notifications.senderId')
             .then(result => {
                 res.status(HttpStatus.OK)
                     .json({ message: 'User By UserName', result });
