@@ -209,6 +209,20 @@ module.exports = {
                 .json({ message: 'Post not found', post })
 
         }
+    },
+
+    deletePost(req, res) {
+        Post.deleteOne({ _id: req.params.id, user: req.user._id })
+            .then(result => {
+                if (result.n > 0) {
+                    res.status(200).json({ message: "Deletion successful!" });
+                } else {
+                    res.status(401).json({ message: "Not authorized!" });
+                }
+            })
+            .catch(error => {
+                res.status(500).json({ message: "Deletion failed!" });
+            });
     }
 };
 

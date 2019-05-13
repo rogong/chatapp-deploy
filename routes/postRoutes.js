@@ -11,5 +11,6 @@ router.get('/post/:id', AuthHelper.VerifyToken, PostController.getPost);
 router.post('/post/add-post', AuthHelper.VerifyToken, PostController.addPost);
 router.post('/post/add-like', AuthHelper.VerifyToken, PostController.addLike);
 router.post('/post/add-comment', AuthHelper.VerifyToken, PostController.addComment);
+router.delete('/delete-post/:id', AuthHelper.VerifyToken, PostController.deletePost);
 
 module.exports = router;
