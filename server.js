@@ -4,7 +4,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
 
-
+const _ = require('lodash');
 
 const app = express();
 
@@ -13,6 +13,8 @@ const dbConfig = require('./config/secret');
 // Integrate IO Server
 const server = require('http').createServer(app);
 const io = require('socket.io').listen(server);
+
+const { User } = require('./Helpers/UserClass');
 
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
@@ -36,7 +38,7 @@ mongoose.Promise = global.Promise;
 mongoose.connect(dbConfig.url, { useNewUrlParser: true });
 
 
-require('./socket/streams')(io);
+require('./socket/streams')(io, User, _);
 require('./socket/private')(io);
 
 const authRoutes = require('./routes/authRoutes');

@@ -26,6 +26,26 @@ module.exports = {
             });
     },
 
+
+    async  getRecommendedUsers(req, res) {
+        await User.find({ 'state': { $eq: req.user.state }, })
+
+            .populate('posts', 'postId')
+            .populate('following.userFollowed')
+            .populate('followers.follower')
+            .populate('notifications.senderId')
+            .limit(5)
+            .then(result => {
+                res.status(HttpStatus.OK)
+                    .json({ message: 'All users', result });
+
+            })
+            .catch(err => {
+                res.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .json({ message: 'Error occured' });
+            });
+    },
+
     async getUser(req, res) {
 
         await User.findOne({ _id: req.params.id })

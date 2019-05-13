@@ -41,16 +41,8 @@ module.exports = {
 
         Conversation.find({
             $or: [
-                {
-                    participants: {
-                        $elemMatch: { senderId: sender_Id, receiverId: receiver_Id }
-                    }
-                },
-                {
-                    participants: {
-                        $elemMatch: { senderId: receiver_Id, receiverId: sender_Id }
-                    }
-                }
+                { participants: { $elemMatch: { senderId: sender_Id, receiverId: receiver_Id } } },
+                { participants: { $elemMatch: { senderId: receiver_Id, receiverId: sender_Id } } }
             ]
         }, async (err, result) => {
 
@@ -76,7 +68,7 @@ module.exports = {
                     .catch(err =>
                         res.status(HttpStatus.INTERNAL_SERVER_ERROR)
                             .json({ message: 'Error occured' })
-                    )
+                    );
 
             } else {
                 const newConversation = new Conversation();
@@ -104,10 +96,12 @@ module.exports = {
                     {
                         $push: {
                             chatList: {
-                                $each: [{
-                                    receiverId: req.params.receiver_Id,
-                                    msgId: newMessage._id
-                                }],
+                                $each: [
+                                    {
+                                        receiverId: req.params.receiver_Id,
+                                        msgId: newMessage._id
+                                    }
+                                ],
                                 $position: 0
                             }
                         }
