@@ -35,7 +35,6 @@ module.exports = {
             created: new Date()
         };
         if (req.body.post && !req.body.image) {
-            console.log(body);
             Post.create(body)
                 .then(async post => {
                     await User.update({
@@ -210,6 +209,92 @@ module.exports = {
 
         }
     },
+
+    updatePost(req, res) {
+        const schema = Joi.object().keys({
+            post: Joi.string().required(),
+            // image: Joi.optional()
+        });
+        const reqbody = {
+            post: req.body.post
+        }
+        const { error } = Joi.validate(reqbody, schema);
+        if (error && error.details) {
+            return res.status(HttpStatus.BAD_REQUEST)
+                .json({ msg: error.details });
+
+        }
+        const body = {
+            user: req.user._id,
+            username: req.user.username,
+            post: req.body.post,
+            created: new Date()
+        };
+        if (req.body.post && !req.body.image) {
+            Post.updateOne({ _id: req.params.id, user: req.user._id }, body)
+                .then(async post => {
+                    await User.update({
+                        _id: req.user._id
+                    },
+                        {
+                            $push: {
+                                posts: {
+                                    postId: post._id,
+                                    post: post.post,
+                                    created: new Date()
+                                }
+                            }
+
+                        });
+                    res.status(HttpStatus.OK)
+                        .json({ message: 'Post updated', post });
+                })
+                .catch(err => {
+                    res.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .json({ message: 'Error occured' })
+                })
+        }
+
+        if (req.body.post && req.body.image) {
+            cloudinary.uploader.upload(req.body.image, async (result) => {
+                const reqBody = {
+                    user: req.user._id,
+                    username: req.user.username,
+                    post: req.body.post,
+                    imgId: result.public_id,
+                    imgVersion: result.version,
+                    created: new Date()
+                };
+                Post.updateOne({ _id: req.params.id, user: req.user._id }, reqBody)
+                    .then(async post => {
+                        await User.update({
+                            _id: req.user._id
+                        },
+                            {
+                                $push: {
+
+                                    posts: {
+                                        postId: post._id,
+                                        post: post.post,
+                                        created: new Date()
+                                    }
+                                }
+
+                            });
+                        res.status(HttpStatus.OK)
+                            .json({ message: 'Post updated', post });
+                    })
+                    .catch(err => {
+                        res.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .json({ message: 'Error occured' })
+                    });
+            }
+
+            )
+        }
+    },
+
+
 
     deletePost(req, res) {
         Post.deleteOne({ _id: req.params.id, user: req.user._id })
