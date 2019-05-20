@@ -43,6 +43,7 @@ require('./socket/private')(io);
 
 const authRoutes = require('./routes/authRoutes');
 const postRoutes = require('./routes/postRoutes');
+const jobRoutes = require('./routes/jobRoutes');
 const userRoutes = require('./routes/userRoutes');
 const friendRoutes = require('./routes/friendRoutes');
 const messageRoutes = require('./routes/messageRoutes');
@@ -50,6 +51,7 @@ const imageRoutes = require('./routes/imageRoutes');
 
 app.use('/api/chatapp', authRoutes);
 app.use('/api/chatapp', postRoutes);
+app.use('/api/chatapp', jobRoutes);
 app.use('/api/chatapp', userRoutes);
 app.use('/api/chatapp', friendRoutes);
 app.use('/api/chatapp', messageRoutes);

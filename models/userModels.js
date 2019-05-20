@@ -12,6 +12,12 @@ const userSchema = mongoose.Schema({
             created: { type: Date, default: Date.now() }
         }
     ],
+    jobs: [
+        {
+            jobId: { type: mongoose.Schema.Types.ObjectId, ref: 'Job' },
+            created: { type: Date, default: Date.now() }
+        }
+    ],
     following: [
         {
             userFollowed: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
