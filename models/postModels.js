@@ -5,6 +5,7 @@ const postSchema = mongoose.Schema({
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     username: { type: String, default: '' },
     post: { type: String, default: '' },
+    imagePath: { type: String, default: '' },
     imgVersion: { type: String, default: '' },
     imgId: { type: String, default: '' },
     comments: [
@@ -25,7 +26,7 @@ const postSchema = mongoose.Schema({
     ],
 
     created: { type: Date, default: Date.now() },
-
+    updated: { type: Date, default: Date.now() },
 
 
 });

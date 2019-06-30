@@ -9,6 +9,7 @@ const jwt = require('jsonwebtoken');
 
 module.exports = {
     async  createUser(req, res) {
+
         const schema = Joi.object().keys({
             username: Joi.string().min(5).max(10).required(),
             email: Joi.string().email().required(),
@@ -16,7 +17,6 @@ module.exports = {
         });
 
         const { error, value } = Joi.validate(req.body, schema);
-        console.log(value);
         if (error && error.details) {
             return res.status(HttpStatus.BAD_REQUEST)
                 .json({ msg: error.details })

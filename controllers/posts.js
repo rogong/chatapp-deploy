@@ -224,14 +224,16 @@ module.exports = {
                 .json({ msg: error.details });
 
         }
+
         const body = {
+
             user: req.user._id,
             username: req.user.username,
             post: req.body.post,
-            created: new Date()
+            updated: new Date()
         };
         if (req.body.post && !req.body.image) {
-            Post.updateOne({ _id: req.params.id, user: req.user._id }, body)
+            Post.updateOne({ _id: req.params.postId, user: req.user._id }, body)
                 .then(async post => {
                     await User.update({
                         _id: req.user._id
@@ -263,9 +265,9 @@ module.exports = {
                     post: req.body.post,
                     imgId: result.public_id,
                     imgVersion: result.version,
-                    created: new Date()
+                    updated: new Date()
                 };
-                Post.updateOne({ _id: req.params.id, user: req.user._id }, reqBody)
+                Post.updateOne({ _id: req.params.postId, user: req.user._id }, reqBody)
                     .then(async post => {
                         await User.update({
                             _id: req.user._id
@@ -309,5 +311,5 @@ module.exports = {
                 res.status(500).json({ message: "Deletion failed!" });
             });
     }
-};
 
+}

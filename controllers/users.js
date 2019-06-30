@@ -28,12 +28,12 @@ module.exports = {
 
 
     async  getRecommendedUsers(req, res) {
-        await User.find({ 'state': { $eq: req.user.state }, })
+        await User.find({
+            'state': { $eq: req.user.state },
+            '_id': { $ne: req.user._id },
+            'followers.follower': { $ne: req.user._id },
+        })
 
-            .populate('posts', 'postId')
-            .populate('following.userFollowed')
-            .populate('followers.follower')
-            .populate('notifications.senderId')
             .limit(5)
             .then(result => {
                 res.status(HttpStatus.OK)

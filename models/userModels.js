@@ -55,7 +55,11 @@ const userSchema = mongoose.Schema({
     ],
     country: { type: String, default: '' },
     state: { type: String, default: '' },
-    city: { type: String, default: '' }
+    city: { type: String, default: '' },
+    resetPasswordLink: {
+        data: String,
+        default: ""
+    }
 });
 
 userSchema.statics.EncryptPassword = async function (password) {

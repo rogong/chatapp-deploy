@@ -1,4 +1,6 @@
-const express = require('express');
+const path = require("path");
+const express = require("express");
+const bodyParser = require("body-parser");
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
@@ -32,6 +34,9 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use("/images", express.static(path.join("backend/images")));
 app.use(logger('dev'));
 
 mongoose.Promise = global.Promise;
@@ -57,6 +62,6 @@ app.use('/api/chatapp', friendRoutes);
 app.use('/api/chatapp', messageRoutes);
 app.use('/api/chatapp', imageRoutes);
 
-server.listen(3000, () => {
-    console.log('Running on port 3000');
+server.listen(4000, () => {
+    console.log('Running on port 4000');
 })
