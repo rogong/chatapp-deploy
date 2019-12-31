@@ -5,12 +5,14 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
+const connectDB = require('./config/db');
 
 const _ = require('lodash');
 
 const app = express();
 
-const dbConfig = require('./config/secret');
+// Connect Database
+connectDB();
 
 // Integrate IO Server
 const server = require('http').createServer(app);
@@ -40,7 +42,7 @@ app.use("/images", express.static(path.join("backend/images")));
 app.use(logger('dev'));
 
 mongoose.Promise = global.Promise;
-mongoose.connect(dbConfig.url, { useNewUrlParser: true });
+
 
 
 require('./socket/streams')(io, User, _);
@@ -62,6 +64,14 @@ app.use('/api/chatapp', friendRoutes);
 app.use('/api/chatapp', messageRoutes);
 app.use('/api/chatapp', imageRoutes);
 
-server.listen(4000, () => {
-    console.log('Running on port 4000');
+// Serve static assets in production
+if (process.env.NODE_ENV === 'production') {
+    // Set static folder
+    app.use(express.static('client/build'));
+
+    app.get('*', (req, res) => res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html')));
+}
+
+server.listen(5000, () => {
+    console.log('Running on port 5000');
 })

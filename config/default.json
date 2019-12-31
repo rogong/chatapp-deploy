@@ -1,0 +1,4 @@
+{
+  "url": " mongodb+srv://oluseyi:wizard4life@chatapp-iand0.mongodb.net/test?retryWrites=true&w=majority",
+  "mongoURL": "mongodb://localhost:27017/chatapp"
+}
